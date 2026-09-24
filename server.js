@@ -12,23 +12,46 @@ import storyRoutes from "./routes/storyRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import logoRoutes from "./routes/logoRoutes.js";
 
-// Load environment variables
+// ==========================================
+// LOAD ENVIRONMENT VARIABLES
+// ==========================================
+
 dotenv.config();
 
-// Connect MongoDB
+// ==========================================
+// CONNECT MONGODB
+// ==========================================
+
 connectDB();
+
+// ==========================================
+// CREATE EXPRESS APP
+// ==========================================
 
 const app = express();
 
-/* =====================================
-   CORS CONFIGURATION
-===================================== */
+// ==========================================
+// CORS CONFIGURATION
+// ==========================================
 
 const allowedOrigins = [
-  // Production frontend
+  // ========================================
+  // PRODUCTION FRONTEND
+  // ========================================
+
+  "https://prarambhafoundation.org",
+  "https://www.prarambhafoundation.org",
+
+  // ========================================
+  // VERCEL FRONTEND
+  // ========================================
+
   "https://prarambha-foundation.vercel.app",
 
-  // Local development
+  // ========================================
+  // LOCAL DEVELOPMENT
+  // ========================================
+
   "http://localhost:5173",
   "http://localhost:3000",
 ];
@@ -36,16 +59,18 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests that don't contain an Origin header
-      // Example: Postman or server-to-server requests
+      // Allow requests without Origin
+      // Example: Postman / server-to-server requests
       if (!origin) {
         return callback(null, true);
       }
 
+      // Allow approved origins
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
 
+      // Block unknown origins
       console.log(`[CORS] Blocked origin: ${origin}`);
 
       return callback(
@@ -70,8 +95,15 @@ app.use(
   })
 );
 
+// ==========================================
+// BODY PARSER
+// ==========================================
 
 app.use(express.json());
+
+// ==========================================
+// API ROUTES
+// ==========================================
 
 app.use("/api/admin", adminRoutes);
 
@@ -87,13 +119,17 @@ app.use("/api/messages", messageRoutes);
 
 app.use("/api/logo", logoRoutes);
 
-/* =====================================
-   ROOT
-===================================== */
+// ==========================================
+// ROOT ROUTE
+// ==========================================
 
 app.get("/", (req, res) => {
-  res.send("Prarambha Foundation API Running");
+  res.status(200).send("Prarambha Foundation API Running");
 });
+
+// ==========================================
+// CORS / SERVER ERROR HANDLER
+// ==========================================
 
 app.use((err, req, res, next) => {
   console.error("[SERVER ERROR]", err.message);
@@ -109,7 +145,15 @@ app.use((err, req, res, next) => {
   });
 });
 
+// ==========================================
+// PORT
+// ==========================================
+
 const PORT = process.env.PORT || 5000;
+
+// ==========================================
+// START SERVER
+// ==========================================
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
