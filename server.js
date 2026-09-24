@@ -35,9 +35,11 @@ const app = express();
 // ==========================================
 
 const allowedOrigins = [
+  // Production frontend
   "https://prarambhafoundation.org",
   "https://www.prarambhafoundation.org",
-  "https://prarambha-foundation.vercel.app",
+
+  // Local development
   "http://localhost:5173",
   "http://localhost:3000",
 ];
@@ -50,8 +52,19 @@ app.use(
   cors({
     origin: allowedOrigins,
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+
+    methods: [
+      "GET",
+      "POST",
+      "PUT",
+      "DELETE",
+      "OPTIONS",
+    ],
+
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+    ],
   })
 );
 
