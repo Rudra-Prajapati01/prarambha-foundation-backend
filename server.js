@@ -35,63 +35,23 @@ const app = express();
 // ==========================================
 
 const allowedOrigins = [
-  // ========================================
-  // PRODUCTION FRONTEND
-  // ========================================
-
   "https://prarambhafoundation.org",
   "https://www.prarambhafoundation.org",
-
-  // ========================================
-  // VERCEL FRONTEND
-  // ========================================
-
   "https://prarambha-foundation.vercel.app",
-
-  // ========================================
-  // LOCAL DEVELOPMENT
-  // ========================================
-
   "http://localhost:5173",
   "http://localhost:3000",
 ];
 
+// ==========================================
+// CORS MIDDLEWARE
+// ==========================================
+
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Allow requests without Origin
-      // Example: Postman / server-to-server requests
-      if (!origin) {
-        return callback(null, true);
-      }
-
-      // Allow approved origins
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      // Block unknown origins
-      console.log(`[CORS] Blocked origin: ${origin}`);
-
-      return callback(
-        new Error(`CORS blocked for origin: ${origin}`)
-      );
-    },
-
+    origin: allowedOrigins,
     credentials: true,
-
-    methods: [
-      "GET",
-      "POST",
-      "PUT",
-      "DELETE",
-      "OPTIONS",
-    ],
-
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -128,17 +88,11 @@ app.get("/", (req, res) => {
 });
 
 // ==========================================
-// CORS / SERVER ERROR HANDLER
+// SERVER ERROR HANDLER
 // ==========================================
 
 app.use((err, req, res, next) => {
-  console.error("[SERVER ERROR]", err.message);
-
-  if (err.message?.startsWith("CORS blocked")) {
-    return res.status(403).json({
-      message: "CORS policy blocked this request",
-    });
-  }
+  console.error("[SERVER ERROR]", err);
 
   res.status(500).json({
     message: "Internal server error",
